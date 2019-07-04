@@ -1,2 +1,2 @@
-# Tetrominoes
-A Tetris® clone written in C
+# LetsSweepSomeMines
+A Minesweeper clone written in C++ with SDL2
