@@ -24,6 +24,9 @@
     <ClCompile Include="Game.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="MineField.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Init.h">
@@ -32,5 +35,49 @@
     <ClInclude Include="Game.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="MineField.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Mine_NotPressed.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_Pressed.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_Pressing.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_1.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_2.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_3.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_4.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_5.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_FlagPlaced.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_MineExposed.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_6.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_7.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Mine_8.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

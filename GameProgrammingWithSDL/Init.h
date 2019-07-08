@@ -12,6 +12,5 @@ bool Init();
 bool InitSDL();
 bool CreateWindow();
 bool CreateRenderer();
-void InitRenderer();
 
-#endif // !INIT_H
+#endif  // !INIT_H

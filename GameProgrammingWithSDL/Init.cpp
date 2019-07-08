@@ -1,17 +1,13 @@
-#include <iostream>
 #include "Init.h"
+#include <iostream>
 
 bool Init() {
-  if (InitSDL() == false)
-    return false;
+  if (InitSDL() == false) return false;
 
-  if (CreateWindow() == false)
-    return false;
+  if (CreateWindow() == false) return false;
 
-  if (CreateRenderer() == false)
-    return false;
+  if (CreateRenderer() == false) return false;
 
-  InitRenderer();
   return true;
 }
 
@@ -25,7 +21,8 @@ bool InitSDL() {
 }
 
 bool CreateWindow() {
-  window = SDL_CreateWindow("SDL Test", posX, posY, sizeX, sizeY, SDL_WINDOW_SHOWN);
+  window =
+      SDL_CreateWindow("SDL Test", posX, posY, sizeX, sizeY, SDL_WINDOW_SHOWN);
 
   if (window == NULL) {
     std::cout << " Failed to create window : " << SDL_GetError() << std::endl;
@@ -44,12 +41,4 @@ bool CreateRenderer() {
   }
 
   return true;
-}
-
-void InitRenderer() {
-  // Set size of renderer to the same as window
-  SDL_RenderSetLogicalSize(renderer, sizeX, sizeY);
-
-  // Set color of renderer to white
-  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
