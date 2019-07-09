@@ -3,12 +3,13 @@
 
 #include "SDL.h"
 #include "MineField.h"
-#define CELL_SIZE 32
+
+constexpr int CELL_SIZE = 32;
 
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern MineField* minefield;
-extern SDL_Surface* surfaceArr[13];
+extern SDL_Surface* surfaceArr[14];
 
 extern int cellX, cellY, mineNum;
 extern int sizeX, sizeY;

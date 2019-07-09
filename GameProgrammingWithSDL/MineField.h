@@ -32,6 +32,7 @@ class MineField {
   int height = 0;
   int totalMine = 0;
   int foundMine = 0;
+  std::pair<int, int> explodedPos = { -1, -1 };
 
  public:
   // Initiate the MineField without mines
@@ -56,6 +57,7 @@ class MineField {
   bool GetMineStatus(std::pair<int, int>);
   int GetNearMine(std::pair<int, int>);
   bool GetGameStatus();
+  std::pair<int, int> GetExplodedPos();
 };
 
 #endif  // !MINEFIELD_H

@@ -100,10 +100,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\dev\SDL2-2.0.9\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\dev\SDL2-2.0.9\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,19 +136,20 @@
     <ClInclude Include="MineField.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Mine_1.bmp" />
-    <Image Include="Mine_2.bmp" />
-    <Image Include="Mine_3.bmp" />
-    <Image Include="Mine_4.bmp" />
-    <Image Include="Mine_5.bmp" />
-    <Image Include="Mine_6.bmp" />
-    <Image Include="Mine_7.bmp" />
-    <Image Include="Mine_8.bmp" />
-    <Image Include="Mine_FlagPlaced.bmp" />
-    <Image Include="Mine_MineExposed.bmp" />
-    <Image Include="Mine_NotPressed.bmp" />
-    <Image Include="Mine_Pressed.bmp" />
-    <Image Include="Mine_Pressing.bmp" />
+    <Image Include="..\Images\Mine_1.bmp" />
+    <Image Include="..\Images\Mine_2.bmp" />
+    <Image Include="..\Images\Mine_3.bmp" />
+    <Image Include="..\Images\Mine_4.bmp" />
+    <Image Include="..\Images\Mine_5.bmp" />
+    <Image Include="..\Images\Mine_6.bmp" />
+    <Image Include="..\Images\Mine_7.bmp" />
+    <Image Include="..\Images\Mine_8.bmp" />
+    <Image Include="..\Images\Mine_FlagPlaced.bmp" />
+    <Image Include="..\Images\Mine_MineExploded.bmp" />
+    <Image Include="..\Images\Mine_MineExposed.bmp" />
+    <Image Include="..\Images\Mine_NotPressed.bmp" />
+    <Image Include="..\Images\Mine_Pressed.bmp" />
+    <Image Include="..\Images\Mine_Pressing.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -6,7 +6,7 @@
 SDL_Window* window;
 SDL_Renderer* renderer;
 MineField* minefield;
-SDL_Surface* surfaceArr[13];
+SDL_Surface* surfaceArr[14];
 
 int posX = 100;
 int posY = 200;

@@ -20,19 +20,20 @@ void ConfigureRenderer() {
 }
 
 void LoadBMPs() {
-  surfaceArr[0] = SDL_LoadBMP("Mine_Pressed.bmp");
-  surfaceArr[1] = SDL_LoadBMP("Mine_1.bmp");
-  surfaceArr[2] = SDL_LoadBMP("Mine_2.bmp");
-  surfaceArr[3] = SDL_LoadBMP("Mine_3.bmp");
-  surfaceArr[4] = SDL_LoadBMP("Mine_4.bmp");
-  surfaceArr[5] = SDL_LoadBMP("Mine_5.bmp");
-  surfaceArr[6] = SDL_LoadBMP("Mine_6.bmp");
-  surfaceArr[7] = SDL_LoadBMP("Mine_7.bmp");
-  surfaceArr[8] = SDL_LoadBMP("Mine_8.bmp");
-  surfaceArr[9] = SDL_LoadBMP("Mine_MineExposed.bmp");
-  surfaceArr[10] = SDL_LoadBMP("Mine_Pressing.bmp");
-  surfaceArr[11] = SDL_LoadBMP("Mine_NotPressed.bmp");
-  surfaceArr[12] = SDL_LoadBMP("Mine_FlagPlaced.bmp");
+  surfaceArr[0] = SDL_LoadBMP("Images/Mine_Pressed.bmp");
+  surfaceArr[1] = SDL_LoadBMP("Images/Mine_1.bmp");
+  surfaceArr[2] = SDL_LoadBMP("Images/Mine_2.bmp");
+  surfaceArr[3] = SDL_LoadBMP("Images/Mine_3.bmp");
+  surfaceArr[4] = SDL_LoadBMP("Images/Mine_4.bmp");
+  surfaceArr[5] = SDL_LoadBMP("Images/Mine_5.bmp");
+  surfaceArr[6] = SDL_LoadBMP("Images/Mine_6.bmp");
+  surfaceArr[7] = SDL_LoadBMP("Images/Mine_7.bmp");
+  surfaceArr[8] = SDL_LoadBMP("Images/Mine_8.bmp");
+  surfaceArr[9] = SDL_LoadBMP("Images/Mine_MineExposed.bmp");
+  surfaceArr[10] = SDL_LoadBMP("Images/Mine_Pressing.bmp");
+  surfaceArr[11] = SDL_LoadBMP("Images/Mine_NotPressed.bmp");
+  surfaceArr[12] = SDL_LoadBMP("Images/Mine_FlagPlaced.bmp");
+  surfaceArr[13] = SDL_LoadBMP("Images/Mine_MineExploded.bmp");
 }
 
 void Render() {
@@ -52,8 +53,12 @@ void Render() {
       else if (minefield->GetClickStatus({xPos, yPos}) == 1)
         texture = SDL_CreateTextureFromSurface(renderer, surfaceArr[10]);
       else {
-        if (minefield->GetMineStatus({xPos, yPos}) == true)
+        if (minefield->GetMineStatus({xPos, yPos}) == true) {
+          if (minefield->GetExplodedPos() == std::make_pair(xPos, yPos))
+            texture = SDL_CreateTextureFromSurface(renderer, surfaceArr[13]);
+          else
           texture = SDL_CreateTextureFromSurface(renderer, surfaceArr[9]);
+        }
         else {
           int mineNum = minefield->GetNearMine({xPos, yPos});
           texture = SDL_CreateTextureFromSurface(renderer, surfaceArr[mineNum]);

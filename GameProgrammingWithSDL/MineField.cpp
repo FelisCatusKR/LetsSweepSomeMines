@@ -50,6 +50,7 @@ void MineField::LeftButtonAction(std::pair<int, int> coor) {
   cell[posX][posY].clickStatus = 2;
 
   if (cell[posX][posY].isMine) {
+    explodedPos = {posX, posY};
     for (int i = 0; i < width; i++) {
       for (int j = 0; j < height; j++) {
         cell[i][j].clickStatus = 2;
@@ -130,3 +131,5 @@ int MineField::GetNearMine(std::pair<int, int> coor) {
 }
 
 bool MineField::GetGameStatus() { return isFinished; }
+
+std::pair<int, int> MineField::GetExplodedPos() { return explodedPos; }
