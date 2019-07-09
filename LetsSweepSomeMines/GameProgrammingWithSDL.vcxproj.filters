@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="리소스 파일\Images">
+      <UniqueIdentifier>{7d87baa6-6024-4c04-b49f-bb8e4ec85443}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -40,47 +43,47 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\Images\Mine_Pressing.bmp">
+      <Filter>리소스 파일\Images</Filter>
+    </Image>
     <Image Include="..\Images\Mine_1.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_2.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_3.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_4.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_5.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_6.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_7.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_8.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_FlagPlaced.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_MineExploded.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_MineExposed.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_NotPressed.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
     <Image Include="..\Images\Mine_Pressed.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="..\Images\Mine_Pressing.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </Image>
   </ItemGroup>
 </Project>
