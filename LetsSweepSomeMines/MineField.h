@@ -1,9 +1,9 @@
 #ifndef MINEFIELD_H
 #define MINEFIELD_H
 
+#include <queue>
 #include <random>
 #include <vector>
-#include <queue>
 
 constexpr int DEFAULT_MINEFIELD_WIDTH = 13;
 constexpr int DEFAULT_MINEFIELD_HEIGHT = 15;

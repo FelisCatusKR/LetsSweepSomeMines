@@ -24,8 +24,10 @@ void MineField::PlaceMines(Point firstClickPos) {
     curPlacedMine++;
 
     for (int i = 0; i < 8; i++) {
-      Point newPos = { x + dx_8[i], y + dy_8[i] };
-      if (newPos.x < 0 || newPos.x >= width || newPos.y < 0 || newPos.y >= height) continue;
+      Point newPos = {x + dx_8[i], y + dy_8[i]};
+      if (newPos.x < 0 || newPos.x >= width || newPos.y < 0 ||
+          newPos.y >= height)
+        continue;
       int posIndex = CalcIndex(newPos);
       cell[posIndex].nearMine++;
     }

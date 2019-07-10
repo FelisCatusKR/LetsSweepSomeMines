@@ -14,6 +14,7 @@ bool GameEngine::GameLoop() {
     if (renderClass->NewGame(diffStruct[diff].w, diffStruct[diff].h) == false)
       return false;
     RunGame();
+    gameFinished = false;
     delete mineField;
     if (renderClass->MainMenu() == false) return false;
   }
