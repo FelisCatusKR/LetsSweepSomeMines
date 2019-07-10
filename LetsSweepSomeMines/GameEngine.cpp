@@ -6,19 +6,19 @@ bool GameEngine::Init() {
   return true;
 }
 
-bool GameEngine::GameLoop() {
-  if (renderClass->MainMenu() == false) return false;
-  while (!MainMenu()) {
+void GameEngine::GameLoop() {
+  while (true) {
+    renderClass->MainMenu();
+    bool isQuit = MainMenu();
+    if (isQuit) break;
+
     mineField = new MineField(diffStruct[diff].w, diffStruct[diff].h,
                               diffStruct[diff].totalM);
-    if (renderClass->NewGame(diffStruct[diff].w, diffStruct[diff].h) == false)
-      return false;
+    renderClass->NewGame(diffStruct[diff].w, diffStruct[diff].h);
     RunGame();
     gameFinished = false;
     delete mineField;
-    if (renderClass->MainMenu() == false) return false;
   }
-  return true;
 }
 
 bool GameEngine::MainMenu() {
@@ -42,17 +42,17 @@ bool GameEngine::MainMenu() {
         isClicking = false;
         clickPos = {event.button.x, event.button.y};
 
-        if (clickPos.x < BUTTON_SPACE_X ||
-            clickPos.x >= BUTTON_SPACE_X + MENUBUTTON_WIDTH)
+        if (clickPos.x < MENUBUTTON_MARGIN_X ||
+            clickPos.x >= MENUBUTTON_MARGIN_X + MENUBUTTON_WIDTH)
           continue;
-        if (clickPos.y >= BUTTON_SPACE_Y * 1 + MENUBUTTON_HEIGHT * 0 &&
-            clickPos.y < BUTTON_SPACE_Y * 1 + MENUBUTTON_HEIGHT * 1)
+        if (clickPos.y >= MENUBUTTON_MARGIN_Y * 1 + MENUBUTTON_HEIGHT * 0 &&
+            clickPos.y < MENUBUTTON_MARGIN_Y * 1 + MENUBUTTON_HEIGHT * 1)
           diff = Easy;
-        if (clickPos.y >= BUTTON_SPACE_Y * 2 + MENUBUTTON_HEIGHT * 1 &&
-            clickPos.y < BUTTON_SPACE_Y * 2 + MENUBUTTON_HEIGHT * 2)
+        if (clickPos.y >= MENUBUTTON_MARGIN_Y * 2 + MENUBUTTON_HEIGHT * 1 &&
+            clickPos.y < MENUBUTTON_MARGIN_Y * 2 + MENUBUTTON_HEIGHT * 2)
           diff = Normal;
-        if (clickPos.y >= BUTTON_SPACE_Y * 3 + MENUBUTTON_HEIGHT * 2 &&
-            clickPos.y < BUTTON_SPACE_Y * 3 + MENUBUTTON_HEIGHT * 3)
+        if (clickPos.y >= MENUBUTTON_MARGIN_Y * 3 + MENUBUTTON_HEIGHT * 2 &&
+            clickPos.y < MENUBUTTON_MARGIN_Y * 3 + MENUBUTTON_HEIGHT * 3)
           diff = Hard;
         loop = false;
       }
@@ -62,36 +62,36 @@ bool GameEngine::MainMenu() {
         case 0:
           renderClass->DrawCell(i, Main_Easy);
           if (isClicking) {
-            if (clickPos.x >= BUTTON_SPACE_X &&
-                clickPos.x < BUTTON_SPACE_X + MENUBUTTON_WIDTH &&
+            if (clickPos.x >= MENUBUTTON_MARGIN_X &&
+                clickPos.x < MENUBUTTON_MARGIN_X + MENUBUTTON_WIDTH &&
                 clickPos.y >=
-                    BUTTON_SPACE_Y * (i + 1) + MENUBUTTON_HEIGHT * i &&
+                    MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * i &&
                 clickPos.y <
-                    BUTTON_SPACE_Y * (i + 1) + MENUBUTTON_HEIGHT * (i + 1))
+                    MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * (i + 1))
               renderClass->DrawCell(i, Main_Easy_Pressed);
           }
           break;
         case 1:
           renderClass->DrawCell(i, Main_Normal);
           if (isClicking) {
-            if (clickPos.x >= BUTTON_SPACE_X &&
-                clickPos.x < BUTTON_SPACE_X + MENUBUTTON_WIDTH &&
+            if (clickPos.x >= MENUBUTTON_MARGIN_X &&
+                clickPos.x < MENUBUTTON_MARGIN_X + MENUBUTTON_WIDTH &&
                 clickPos.y >=
-                    BUTTON_SPACE_Y * (i + 1) + MENUBUTTON_HEIGHT * i &&
+                    MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * i &&
                 clickPos.y <
-                    BUTTON_SPACE_Y * (i + 1) + MENUBUTTON_HEIGHT * (i + 1))
+                    MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * (i + 1))
               renderClass->DrawCell(i, Main_Normal_Pressed);
           }
           break;
         case 2:
           renderClass->DrawCell(i, Main_Hard);
           if (isClicking) {
-            if (clickPos.x >= BUTTON_SPACE_X &&
-                clickPos.x < BUTTON_SPACE_X + MENUBUTTON_WIDTH &&
+            if (clickPos.x >= MENUBUTTON_MARGIN_X &&
+                clickPos.x < MENUBUTTON_MARGIN_X + MENUBUTTON_WIDTH &&
                 clickPos.y >=
-                    BUTTON_SPACE_Y * (i + 1) + MENUBUTTON_HEIGHT * i &&
+                    MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * i &&
                 clickPos.y <
-                    BUTTON_SPACE_Y * (i + 1) + MENUBUTTON_HEIGHT * (i + 1))
+                    MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * (i + 1))
               renderClass->DrawCell(i, Main_Hard_Pressed);
           }
           break;

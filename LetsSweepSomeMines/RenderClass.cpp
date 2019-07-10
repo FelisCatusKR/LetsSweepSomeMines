@@ -1,24 +1,33 @@
 #include "RenderClass.h"
 
 bool RenderClass::Init() {
-  if (InitSDL() == false) return false;
-  return true;
-}
-
-RenderClass::~RenderClass() {
-  for (int i = 0; i < 20; i++) SDL_DestroyTexture(cellTexture[i]);
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window);
-  SDL_Quit();
-}
-
-bool RenderClass::InitSDL() {
   if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
     std::cout << " Failed to initialize SDL : " << SDL_GetError() << std::endl;
     return false;
   }
 
+  window = SDL_CreateWindow("LetsSweepSomeMine", SDL_WINDOWPOS_UNDEFINED,
+                            SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight,
+                            SDL_WINDOW_SHOWN);
+  if (window == NULL) {
+    std::cout << " Failed to create window : " << SDL_GetError() << std::endl;
+    return false;
+  }
+
+  renderer = SDL_CreateRenderer(window, -1, 0);
+  if (renderer == NULL) {
+    std::cout << " Failed to create renderer : " << SDL_GetError() << std::endl;
+    return false;
+  }
+
+  LoadBMPs();
   return true;
+}
+
+RenderClass::~RenderClass() {
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+  SDL_Quit();
 }
 
 void RenderClass::LoadBMPs() {
@@ -64,85 +73,60 @@ void RenderClass::LoadBMPs() {
       renderer, SDL_LoadBMP("Images/Main_Hard_Pressed.bmp"));
 }
 
-bool RenderClass::ResizeWindow() {
-  if (window != NULL && SDL_GetRenderer(window) != NULL)
-    SDL_DestroyRenderer(renderer);
-
-  if (window == NULL) {
-    window = SDL_CreateWindow("LetsSweepSomeMine", SDL_WINDOWPOS_UNDEFINED,
-                              SDL_WINDOWPOS_UNDEFINED, windowWidth,
-                              windowHeight, SDL_WINDOW_SHOWN);
-    if (window == NULL) {
-      std::cout << " Failed to create window : " << SDL_GetError() << std::endl;
-      return false;
-    }
-  } else
-    SDL_SetWindowSize(window, windowWidth, windowHeight);
-
-  renderer = SDL_CreateRenderer(window, -1, 0);
-
-  if (renderer == NULL) {
-    std::cout << " Failed to create renderer : " << SDL_GetError() << std::endl;
-    return false;
-  }
-
+void RenderClass::ResizeWindow() {
+  // Set the size of a window
   SDL_SetWindowSize(window, windowWidth, windowHeight);
 
-  // Set size of renderer to the same as window
+  // Set the size of a renderer to the same as window
   SDL_RenderSetLogicalSize(renderer, windowWidth, windowHeight);
-
-  // Set color of renderer to white
-  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-  SDL_RenderClear(renderer);
-
-  LoadBMPs();
-
-  return true;
 }
 
 void RenderClass::DrawCell(int index, enum CellStatus cellStatus) {
-  SDL_RenderCopy(renderer, cellTexture[cellStatus], nullptr, &rect[index]);
+  rect[index].status = cellStatus;
 }
 
-bool RenderClass::MainMenu() {
-  windowWidth = 13 * CELL_SIZE;
-  windowHeight = 15 * CELL_SIZE;
-  if (ResizeWindow() == false) return false;
+void RenderClass::MainMenu() {
+  windowWidth = MENUSCREEN_WIDTH;
+  windowHeight = MENUSCREEN_HEIGHT;
+  ResizeWindow();
 
-  for (auto i : rect) SDL_RectEmpty(&i);
+  for (auto i : rect) SDL_RectEmpty(&(i.r));
   rect.clear();
   rect.resize(3);
   for (int i = 0; i < 3; i++) {
-    rect[i].w = MENUBUTTON_WIDTH;
-    rect[i].h = MENUBUTTON_HEIGHT;
-    rect[i].x = BUTTON_SPACE_X;
-    rect[i].y = BUTTON_SPACE_Y * (i + 1) + MENUBUTTON_HEIGHT * i;
+    rect[i].r.w = MENUBUTTON_WIDTH;
+    rect[i].r.h = MENUBUTTON_HEIGHT;
+    rect[i].r.x = MENUBUTTON_MARGIN_X;
+    rect[i].r.y = MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * i;
   }
-
-  return true;
 }
 
-bool RenderClass::NewGame(int w, int h) {
+void RenderClass::NewGame(int w, int h) {
   width = w;
   height = h;
   windowWidth = w * CELL_SIZE;
   windowHeight = h * CELL_SIZE;
-
-  if (ResizeWindow() == false) return false;
+  ResizeWindow();
 
   rect.clear();
   rect.resize(width * height);
   for (int i = 0; i < width; i++) {
     for (int j = 0; j < height; j++) {
-      rect[i + j * width].x = i * CELL_SIZE;
-      rect[i + j * width].y = j * CELL_SIZE;
-      rect[i + j * width].w = CELL_SIZE;
-      rect[i + j * width].h = CELL_SIZE;
+      rect[i + j * width].r.x = i * CELL_SIZE;
+      rect[i + j * width].r.y = j * CELL_SIZE;
+      rect[i + j * width].r.w = CELL_SIZE;
+      rect[i + j * width].r.h = CELL_SIZE;
     }
   }
-
-  return true;
 }
 
-void RenderClass::Render() { SDL_RenderPresent(renderer); }
+void RenderClass::Render() {
+  // Set the color of renderer to white
+  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+  SDL_RenderClear(renderer);
+
+  for (auto i : rect)
+    SDL_RenderCopy(renderer, cellTexture[i.status], nullptr, &(i.r));
+
+  SDL_RenderPresent(renderer);
+}

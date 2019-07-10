@@ -9,7 +9,7 @@ class GameEngine {
   struct DiffStruct {
     int w, h, totalM;
   };
-  DiffStruct diffStruct[3] = {{11, 13, 15}, {13, 17, 30}, {23, 19, 60}};
+  DiffStruct diffStruct[3] = {{11, 13, 15}, {13, 17, 35}, {23, 19, 75}};
   enum Difficulty { Easy = 0, Normal, Hard };
   enum Difficulty diff;
   RenderClass* renderClass;
@@ -20,7 +20,7 @@ class GameEngine {
  public:
   ~GameEngine() { delete renderClass; }
   bool Init();
-  bool GameLoop();
+  void GameLoop();
   bool MainMenu();
   void RunGame();
   void LeftButtonAction(Point pos);

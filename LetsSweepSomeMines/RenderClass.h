@@ -6,10 +6,12 @@
 #include "SDL.H"
 
 constexpr int CELL_SIZE = 32;
+constexpr int MENUSCREEN_WIDTH = 416;
+constexpr int MENUSCREEN_HEIGHT = 544;
 constexpr int MENUBUTTON_WIDTH = 192;
 constexpr int MENUBUTTON_HEIGHT = 128;
-constexpr int BUTTON_SPACE_X = 112;
-constexpr int BUTTON_SPACE_Y = 24;
+constexpr int MENUBUTTON_MARGIN_X = 112;
+constexpr int MENUBUTTON_MARGIN_Y = 40;
 
 enum CellStatus {
   Cell_Pressed = 0,
@@ -39,21 +41,24 @@ class RenderClass {
   SDL_Window* window;
   SDL_Renderer* renderer;
   SDL_Texture* cellTexture[20];
-  std::vector<SDL_Rect> rect;
+  struct RectUnit {
+    SDL_Rect r;
+    enum CellStatus status;
+  };
+  std::vector<RectUnit> rect;
   int width;
   int height;
-  int windowWidth;
-  int windowHeight;
+  int windowWidth = MENUSCREEN_WIDTH;
+  int windowHeight = MENUSCREEN_HEIGHT;
 
  public:
   ~RenderClass();
   bool Init();
-  bool InitSDL();
   void LoadBMPs();
   void DrawCell(int index, enum CellStatus cellStatus);
-  bool ResizeWindow();
-  bool MainMenu();
-  bool NewGame(int w, int h);
+  void ResizeWindow();
+  void MainMenu();
+  void NewGame(int w, int h);
   void Render();
 };
 
