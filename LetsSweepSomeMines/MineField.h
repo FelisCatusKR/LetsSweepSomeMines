@@ -38,6 +38,7 @@ class MineField {
   int width = 0;
   int height = 0;
   int totalMines = 0;
+  Point posMineExploded = {-1, -1};
 
  public:
   // Initiate the MineField without mines
@@ -52,6 +53,10 @@ class MineField {
   // Inverts the flag status of selected cell
   void ChangeFlagStatus(Point pos);
 
+  void ChangeMineExploded(Point pos) { posMineExploded = pos; }
+  Point GetMineExploded() { return posMineExploded; }
+
+  bool GetMinePlaced() { return minePlaced; }
   // Returns the press status of cell
   bool GetPressStatus(Point pos) { return cell[CalcIndex(pos)].isPressed; }
 

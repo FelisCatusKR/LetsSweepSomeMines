@@ -1,23 +1,27 @@
 #ifndef GAME_ENGINE_H
 #define GAME_ENGINE_H
 
-#include "RenderClass.h"
 #include "MineField.h"
+#include "RenderClass.h"
 
 class GameEngine {
-private:
+ private:
+  struct DiffStruct {
+    int w, h, totalM;
+  };
+  DiffStruct diffStruct[3] = {{11, 13, 15}, {13, 17, 30}, {23, 19, 60}};
+  enum Difficulty { Easy = 0, Normal, Hard };
+  enum Difficulty diff;
   RenderClass* renderClass;
   MineField* mineField;
-  int width = DEFAULT_MINEFIELD_WIDTH;
-  int height = DEFAULT_MINEFIELD_HEIGHT;
-  int totalMines = DEFAULT_MINEFIELD_TOTALMINES;
-  bool minePlaced = false;
   bool gameFinished = false;
   int foundMines = 0;
-  Point posMineExploded = { -1, -1 };
-public:
-  GameEngine();
+
+ public:
+  ~GameEngine() { delete renderClass; }
   bool Init();
+  bool GameLoop();
+  bool MainMenu();
   void RunGame();
   void LeftButtonAction(Point pos);
   void RightButtonAction(Point pos);
