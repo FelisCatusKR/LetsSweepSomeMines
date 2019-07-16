@@ -16,7 +16,6 @@ void GameEngine::GameLoop() {
                               diffStruct[diff].totalM);
     renderClass->NewGame(diffStruct[diff].w, diffStruct[diff].h);
     RunGame();
-    gameFinished = false;
     delete mineField;
   }
 }
@@ -107,28 +106,35 @@ void GameEngine::RunGame() {
   bool loop = true;
   bool isClicking = false;
   Point clickPos = {-1, -1};
+  timer = new Timer;
 
   while (loop) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT)
         loop = false;
-      else if (event.type == SDL_MOUSEBUTTONDOWN) {
-        if (event.button.button == SDL_BUTTON_LEFT) {
-          if (isClicking) continue;
-          isClicking = true;
-          clickPos = {event.button.x / CELL_SIZE, event.button.y / CELL_SIZE};
-          if (mineField->GetPressStatus(clickPos) == true) {
-            isClicking = false;
-            continue;
+      else if (gameFinished)
+        continue;
+        else if (event.type == SDL_MOUSEBUTTONDOWN) {
+          if (event.button.button == SDL_BUTTON_LEFT) {
+            if (isClicking) continue;
+            isClicking = true;
+            clickPos = {event.button.x / CELL_SIZE,
+                        (event.button.y - GAME_HEADER_HEIGHT) / CELL_SIZE};
+            if (mineField->GetPressStatus(clickPos) == true) {
+              isClicking = false;
+              continue;
+            }
+          } else if (event.button.button == SDL_BUTTON_RIGHT) {
+            clickPos = {event.button.x / CELL_SIZE,
+                        (event.button.y - GAME_HEADER_HEIGHT) / CELL_SIZE};
+            RightButtonAction(clickPos);
           }
-        } else if (event.button.button == SDL_BUTTON_RIGHT) {
-          clickPos = {event.button.x / CELL_SIZE, event.button.y / CELL_SIZE};
-          RightButtonAction(clickPos);
         }
-      } else if (event.type == SDL_MOUSEBUTTONUP && isClicking) {
+      else if (event.type == SDL_MOUSEBUTTONUP && isClicking) {
         isClicking = false;
-        Point curPos = {event.button.x / CELL_SIZE, event.button.y / CELL_SIZE};
+        Point curPos = {event.button.x / CELL_SIZE,
+                        (event.button.y - GAME_HEADER_HEIGHT) / CELL_SIZE};
         if (curPos.x != clickPos.x || curPos.y != clickPos.y) continue;
         LeftButtonAction(clickPos);
       }
@@ -146,8 +152,12 @@ void GameEngine::RunGame() {
       int explodedPos = mineField->CalcIndex(mineField->GetMineExploded());
       renderClass->DrawCell(explodedPos, Cell_MineExploded);
     }
+    if (timer != nullptr && !gameFinished) curTime = timer->GetDelta();
+    renderClass->DrawTimer(curTime);
     renderClass->Render();
   }
+  gameFinished = false;
+  delete timer;
 }
 
 void GameEngine::LeftButtonAction(Point pos) {
@@ -164,9 +174,11 @@ void GameEngine::LeftButtonAction(Point pos) {
   }
 
   else {
-    // If this click is the first click of the game, place mines
+    // If this click is the first click of the game, place mines and start a
+    // timer
     if (!mineField->GetMinePlaced()) {
       mineField->PlaceMines(pos);
+      timer->Init();
     }
     if (mineField->GetNearMine(pos) == 0) {
       std::queue<Point> q;

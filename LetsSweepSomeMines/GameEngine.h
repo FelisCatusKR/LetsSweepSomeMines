@@ -3,6 +3,7 @@
 
 #include "MineField.h"
 #include "RenderClass.h"
+#include <chrono>
 
 class GameEngine {
  private:
@@ -11,7 +12,24 @@ class GameEngine {
   };
   DiffStruct diffStruct[3] = {{11, 13, 15}, {13, 17, 35}, {23, 19, 75}};
   enum Difficulty { Easy = 0, Normal, Hard };
-  enum Difficulty diff;
+  Difficulty diff;
+
+  class Timer {
+   private:
+    std::chrono::time_point<std::chrono::high_resolution_clock> timePrev;
+   public:
+    void Init() { timePrev = std::chrono::high_resolution_clock::now(); }
+    double GetDelta() {
+      std::chrono::time_point<std::chrono::high_resolution_clock> timeCurrent;
+      if (timeCurrent.time_since_epoch() == timePrev.time_since_epoch())
+        return 0.0;
+      timeCurrent = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double> delta(timeCurrent - timePrev);
+      return delta.count();
+    }
+  };
+  Timer* timer;
+  double curTime;
   RenderClass* renderClass;
   MineField* mineField;
   bool gameFinished = false;

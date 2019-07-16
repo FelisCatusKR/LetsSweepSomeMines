@@ -315,6 +315,10 @@ dkms.conf
 
 # SDL2 development libraries
 SDL
+SDL_ttf
 
 # NTFS junction
 LetsSweepSomeMines/Images
+
+# Font file
+RobotoMono-Regular.ttf
