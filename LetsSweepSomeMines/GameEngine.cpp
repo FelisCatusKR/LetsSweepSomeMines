@@ -108,6 +108,8 @@ void GameEngine::RunGame() {
   Point clickPos = {-1, -1};
   timer = new Timer;
 
+  renderClass->DrawRemainCount(mineField->GetRemainMineCount());
+
   while (loop) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -129,6 +131,7 @@ void GameEngine::RunGame() {
             clickPos = {event.button.x / CELL_SIZE,
                         (event.button.y - GAME_HEADER_HEIGHT) / CELL_SIZE};
             RightButtonAction(clickPos);
+            renderClass->DrawRemainCount(mineField->GetRemainMineCount());
           }
         }
       else if (event.type == SDL_MOUSEBUTTONUP && isClicking) {

@@ -38,6 +38,7 @@ class MineField {
   int width = 0;
   int height = 0;
   int totalMines = 0;
+  int flagedMines = 0;
   Point posMineExploded = {-1, -1};
 
  public:
@@ -55,6 +56,8 @@ class MineField {
 
   void ChangeMineExploded(Point pos) { posMineExploded = pos; }
   Point GetMineExploded() { return posMineExploded; }
+
+  int GetRemainMineCount() const;
 
   bool GetMinePlaced() { return minePlaced; }
   // Returns the press status of cell

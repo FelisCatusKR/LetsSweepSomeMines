@@ -44,4 +44,14 @@ void MineField::ChangePressStatus(Point pos) {
 void MineField::ChangeFlagStatus(Point pos) {
   int posIndex = CalcIndex(pos);
   cell[posIndex].isFlagPlaced = !cell[posIndex].isFlagPlaced;
+  if (cell[posIndex].isFlagPlaced)
+    flagedMines++;
+  else
+    flagedMines--;
+}
+
+int MineField::GetRemainMineCount() const
+{
+  int remainCount = totalMines - flagedMines;
+  return remainCount > 0 ? remainCount : 0;
 }

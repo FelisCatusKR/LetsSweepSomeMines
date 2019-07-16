@@ -1,0 +1,13 @@
+root = true
+
+# for C++ files
+[*.{cpp,h}]
+
+# indent & tab style
+indent_size = 2
+indent_style = space
+tab_width = 2
+
+# newline setting
+end_of_line = crlf
+insert_final_newline = false
