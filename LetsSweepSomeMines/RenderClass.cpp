@@ -110,6 +110,11 @@ void RenderClass::DrawTimer(double timer) {
   std::sprintf(timerUnit.str, "%.1lf", timer);
 }
 
+void RenderClass::DrawRemainCount(int count)
+{
+  std::sprintf(remainCountUnit.str, "%03d", count);
+}
+
 void RenderClass::MainMenu() {
   windowWidth = MENUSCREEN_WIDTH;
   windowHeight = MENUSCREEN_HEIGHT;
@@ -135,6 +140,8 @@ void RenderClass::NewGame(int w, int h) {
   ResizeWindow();
   timerUnit.r.x = windowWidth - 64;
   timerUnit.r.y = 12;
+  remainCountUnit.r.x = 12;
+  remainCountUnit.r.y = 12;
   isInGame = true;
 
   rect.clear();
@@ -165,6 +172,14 @@ void RenderClass::Render() {
     SDL_QueryTexture(timerUnit.texture, nullptr, nullptr, &timerUnit.r.w,
                      &timerUnit.r.h);
     SDL_RenderCopy(renderer, timerUnit.texture, nullptr, &timerUnit.r);
+
+    SDL_Surface* remainCountSurface =
+      TTF_RenderText_Solid(font, remainCountUnit.str, {192, 0, 0, 255});
+    remainCountUnit.texture = SurfaceToTexture(remainCountSurface);
+    SDL_QueryTexture(remainCountUnit.texture, nullptr, nullptr, &remainCountUnit.r.w,
+      &remainCountUnit.r.h);
+    SDL_RenderCopy(renderer, remainCountUnit.texture, nullptr, &remainCountUnit.r);
+
   }
 
   SDL_RenderPresent(renderer);

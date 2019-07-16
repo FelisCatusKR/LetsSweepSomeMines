@@ -52,12 +52,13 @@ class RenderClass {
   };
   std::vector<RectUnit> rect;
 
-  struct TimerUnit {
-    char str[1000];
+  struct TextPaintUnit {
+    char str[1000] = {0,};
     SDL_Texture* texture;
     SDL_Rect r;
   };
-  TimerUnit timerUnit;
+  TextPaintUnit timerUnit;
+  TextPaintUnit remainCountUnit;
 
   int width;
   int height;
@@ -75,6 +76,7 @@ class RenderClass {
   void LoadBMPs();
   void DrawCell(int index, enum CellStatus cellStatus);
   void DrawTimer(double timer);
+  void DrawRemainCount(int count);
   void ResizeWindow();
   void MainMenu();
   void NewGame(int w, int h);
