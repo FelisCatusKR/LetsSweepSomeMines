@@ -1,9 +1,9 @@
 #ifndef GAME_ENGINE_H
 #define GAME_ENGINE_H
 
+#include <chrono>
 #include "MineField.h"
 #include "RenderClass.h"
-#include <chrono>
 
 class GameEngine {
  private:
@@ -11,14 +11,22 @@ class GameEngine {
     int w, h, totalM;
   };
   DiffStruct diffStruct[3] = {{11, 13, 15}, {13, 17, 35}, {23, 19, 75}};
-  enum Difficulty { Easy = 0, Normal, Hard };
+  enum class Difficulty { Easy = 0, Normal, Hard };
   Difficulty diff;
-
+  enum class GameStatus { NotFinished = 0, Win, Lose };
+  GameStatus gameStatus;
+  enum class ClickedPos { Cell = 0, Button, Background };
   class Timer {
    private:
+    bool isInit = false;
     std::chrono::time_point<std::chrono::high_resolution_clock> timePrev;
+
    public:
-    void Init() { timePrev = std::chrono::high_resolution_clock::now(); }
+    void Init() {
+      isInit = true;
+      timePrev = std::chrono::high_resolution_clock::now();
+    }
+    bool GetInit() { return isInit; }
     double GetDelta() {
       std::chrono::time_point<std::chrono::high_resolution_clock> timeCurrent;
       if (timeCurrent.time_since_epoch() == timePrev.time_since_epoch())
@@ -32,18 +40,18 @@ class GameEngine {
   double curTime;
   RenderClass* renderClass;
   MineField* mineField;
-  bool gameFinished = false;
-  int foundMines = 0;
+  int foundMines;
 
  public:
   ~GameEngine() { delete renderClass; }
   bool Init();
   void GameLoop();
   bool MainMenu();
-  void RunGame();
+  bool RunGame();
   void LeftButtonAction(Point pos);
   void RightButtonAction(Point pos);
-  enum CellStatus GetCellStatus(Point pos);
+  ButtonStatus GetCellStatus(Point pos);
+  ClickedPos CheckClickedPos(SDL_Event event);
 };
 
 #endif  // !GAME_ENGINE_H

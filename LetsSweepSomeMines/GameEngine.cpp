@@ -11,12 +11,16 @@ void GameEngine::GameLoop() {
     renderClass->MainMenu();
     bool isQuit = MainMenu();
     if (isQuit) break;
-
-    mineField = new MineField(diffStruct[diff].w, diffStruct[diff].h,
-                              diffStruct[diff].totalM);
-    renderClass->NewGame(diffStruct[diff].w, diffStruct[diff].h);
-    RunGame();
-    delete mineField;
+    bool isGameQuit = false;
+    while (!isGameQuit) {
+      mineField = new MineField(diffStruct[static_cast<int>(diff)].w,
+                                diffStruct[static_cast<int>(diff)].h,
+                                diffStruct[static_cast<int>(diff)].totalM);
+      renderClass->NewGame(diffStruct[static_cast<int>(diff)].w,
+                           diffStruct[static_cast<int>(diff)].h);
+      isGameQuit = RunGame();
+      delete mineField;
+    }
   }
 }
 
@@ -46,20 +50,20 @@ bool GameEngine::MainMenu() {
           continue;
         if (clickPos.y >= MENUBUTTON_MARGIN_Y * 1 + MENUBUTTON_HEIGHT * 0 &&
             clickPos.y < MENUBUTTON_MARGIN_Y * 1 + MENUBUTTON_HEIGHT * 1)
-          diff = Easy;
+          diff = Difficulty::Easy;
         if (clickPos.y >= MENUBUTTON_MARGIN_Y * 2 + MENUBUTTON_HEIGHT * 1 &&
             clickPos.y < MENUBUTTON_MARGIN_Y * 2 + MENUBUTTON_HEIGHT * 2)
-          diff = Normal;
+          diff = Difficulty::Normal;
         if (clickPos.y >= MENUBUTTON_MARGIN_Y * 3 + MENUBUTTON_HEIGHT * 2 &&
             clickPos.y < MENUBUTTON_MARGIN_Y * 3 + MENUBUTTON_HEIGHT * 3)
-          diff = Hard;
+          diff = Difficulty::Hard;
         loop = false;
       }
     }
     for (int i = 0; i < 3; i++) {
       switch (i) {
         case 0:
-          renderClass->DrawCell(i, Main_Easy);
+          renderClass->DrawCell(i, ButtonStatus::Main_Easy);
           if (isClicking) {
             if (clickPos.x >= MENUBUTTON_MARGIN_X &&
                 clickPos.x < MENUBUTTON_MARGIN_X + MENUBUTTON_WIDTH &&
@@ -67,11 +71,11 @@ bool GameEngine::MainMenu() {
                     MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * i &&
                 clickPos.y <
                     MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * (i + 1))
-              renderClass->DrawCell(i, Main_Easy_Pressed);
+              renderClass->DrawCell(i, ButtonStatus::Main_Easy_Pressed);
           }
           break;
         case 1:
-          renderClass->DrawCell(i, Main_Normal);
+          renderClass->DrawCell(i, ButtonStatus::Main_Normal);
           if (isClicking) {
             if (clickPos.x >= MENUBUTTON_MARGIN_X &&
                 clickPos.x < MENUBUTTON_MARGIN_X + MENUBUTTON_WIDTH &&
@@ -79,11 +83,11 @@ bool GameEngine::MainMenu() {
                     MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * i &&
                 clickPos.y <
                     MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * (i + 1))
-              renderClass->DrawCell(i, Main_Normal_Pressed);
+              renderClass->DrawCell(i, ButtonStatus::Main_Normal_Pressed);
           }
           break;
         case 2:
-          renderClass->DrawCell(i, Main_Hard);
+          renderClass->DrawCell(i, ButtonStatus::Main_Hard);
           if (isClicking) {
             if (clickPos.x >= MENUBUTTON_MARGIN_X &&
                 clickPos.x < MENUBUTTON_MARGIN_X + MENUBUTTON_WIDTH &&
@@ -91,7 +95,7 @@ bool GameEngine::MainMenu() {
                     MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * i &&
                 clickPos.y <
                     MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * (i + 1))
-              renderClass->DrawCell(i, Main_Hard_Pressed);
+              renderClass->DrawCell(i, ButtonStatus::Main_Hard_Pressed);
           }
           break;
       }
@@ -102,78 +106,103 @@ bool GameEngine::MainMenu() {
   return quit;
 }
 
-void GameEngine::RunGame() {
+bool GameEngine::RunGame() {
   bool loop = true;
+  bool quit = false;
   bool isClicking = false;
   Point clickPos = {-1, -1};
+  ClickedPos prevClickedPos = ClickedPos::Background;
   timer = new Timer;
-
-  renderClass->DrawRemainCount(mineField->GetRemainMineCount());
+  gameStatus = GameStatus::NotFinished;
+  curTime = 0.0;
+  int restartButtonIndex = diffStruct[static_cast<int>(diff)].w *
+                           diffStruct[static_cast<int>(diff)].h;
 
   while (loop) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_QUIT)
+      if (event.type == SDL_QUIT) {
         loop = false;
-      else if (gameFinished)
-        continue;
-        else if (event.type == SDL_MOUSEBUTTONDOWN) {
-          if (event.button.button == SDL_BUTTON_LEFT) {
-            if (isClicking) continue;
-            isClicking = true;
+        quit = true;
+      } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+        if (event.button.button == SDL_BUTTON_LEFT) {
+          if (isClicking) continue;
+          isClicking = true;
+          prevClickedPos = CheckClickedPos(event);
+          if (prevClickedPos == ClickedPos::Cell) {
             clickPos = {event.button.x / CELL_SIZE,
                         (event.button.y - GAME_HEADER_HEIGHT) / CELL_SIZE};
             if (mineField->GetPressStatus(clickPos) == true) {
               isClicking = false;
               continue;
             }
-          } else if (event.button.button == SDL_BUTTON_RIGHT) {
-            clickPos = {event.button.x / CELL_SIZE,
-                        (event.button.y - GAME_HEADER_HEIGHT) / CELL_SIZE};
-            RightButtonAction(clickPos);
-            renderClass->DrawRemainCount(mineField->GetRemainMineCount());
-          }
+          } else if (prevClickedPos == ClickedPos::Button) {
+          } else
+            isClicking = false;
+        } else if (event.button.button == SDL_BUTTON_RIGHT) {
+          if (gameStatus != GameStatus::NotFinished) continue;
+          if (CheckClickedPos(event) != ClickedPos::Cell) continue;
+          clickPos = {event.button.x / CELL_SIZE,
+                      (event.button.y - GAME_HEADER_HEIGHT) / CELL_SIZE};
+          RightButtonAction(clickPos);
         }
-      else if (event.type == SDL_MOUSEBUTTONUP && isClicking) {
+      } else if (event.type == SDL_MOUSEBUTTONUP && isClicking) {
         isClicking = false;
-        Point curPos = {event.button.x / CELL_SIZE,
-                        (event.button.y - GAME_HEADER_HEIGHT) / CELL_SIZE};
-        if (curPos.x != clickPos.x || curPos.y != clickPos.y) continue;
-        LeftButtonAction(clickPos);
+        ClickedPos curClickedPos = CheckClickedPos(event);
+        if (curClickedPos != prevClickedPos) continue;
+        if (curClickedPos == ClickedPos::Cell &&
+            gameStatus == GameStatus::NotFinished)
+          LeftButtonAction(clickPos);
+        else if (curClickedPos == ClickedPos::Button)
+          loop = false;
       }
     }
-    for (int i = 0; i < diffStruct[diff].w; i++) {
-      for (int j = 0; j < diffStruct[diff].h; j++) {
+    for (int i = 0; i < diffStruct[static_cast<int>(diff)].w; i++) {
+      for (int j = 0; j < diffStruct[static_cast<int>(diff)].h; j++) {
         Point pos = {i, j};
-        if (isClicking && pos.x == clickPos.x && pos.y == clickPos.y)
-          renderClass->DrawCell(mineField->CalcIndex(pos), Cell_Pressing);
+        if (isClicking && prevClickedPos == ClickedPos::Cell &&
+            pos.x == clickPos.x && pos.y == clickPos.y)
+          renderClass->DrawCell(mineField->CalcIndex(pos),
+                                ButtonStatus::Cell_Pressing);
         else
           renderClass->DrawCell(mineField->CalcIndex(pos), GetCellStatus(pos));
       }
     }
-    if (gameFinished) {
+    if (gameStatus == GameStatus::Lose) {
       int explodedPos = mineField->CalcIndex(mineField->GetMineExploded());
-      renderClass->DrawCell(explodedPos, Cell_MineExploded);
+      renderClass->DrawCell(explodedPos, ButtonStatus::Cell_MineExploded);
     }
-    if (timer != nullptr && !gameFinished) curTime = timer->GetDelta();
-    renderClass->DrawTimer(curTime);
+
+    if (isClicking && prevClickedPos == ClickedPos::Button)
+      renderClass->DrawCell(restartButtonIndex, ButtonStatus::Restart_Pressing);
+    else if (gameStatus == GameStatus::Win)
+      renderClass->DrawCell(restartButtonIndex, ButtonStatus::Restart_Win);
+    else if (gameStatus == GameStatus::Lose)
+      renderClass->DrawCell(restartButtonIndex, ButtonStatus::Restart_Lose);
+    else
+      renderClass->DrawCell(restartButtonIndex,
+                            ButtonStatus::Restart_NotPressed);
+    if (timer->GetInit() == true && gameStatus == GameStatus::NotFinished)
+      curTime = timer->GetDelta();
+    renderClass->DrawRemainCount(mineField->GetRemainFlagCount());
+    renderClass->DrawTimer(static_cast<int>(curTime));
     renderClass->Render();
   }
-  gameFinished = false;
   delete timer;
+  return quit;
 }
 
 void GameEngine::LeftButtonAction(Point pos) {
   mineField->ChangePressStatus(pos);
 
-  // Explode a mine and end game if the cell has a mine
+  // Explode a mine and change the game status to Lose if the cell has a mine
   if (mineField->GetMineStatus(pos)) {
     mineField->ChangeMineExploded(pos);
-    for (int i = 0; i < diffStruct[diff].w; i++) {
-      for (int j = 0; j < diffStruct[diff].h; j++)
+    for (int i = 0; i < diffStruct[static_cast<int>(diff)].w; i++) {
+      for (int j = 0; j < diffStruct[static_cast<int>(diff)].h; j++)
         mineField->ChangePressStatus({i, j});
     }
-    gameFinished = true;
+    gameStatus = GameStatus::Lose;
   }
 
   else {
@@ -192,8 +221,9 @@ void GameEngine::LeftButtonAction(Point pos) {
         q.pop();
         for (int i = 0; i < 8; i++) {
           Point newPos = {x + dx_8[i], y + dy_8[i]};
-          if (newPos.x < 0 || newPos.x >= diffStruct[diff].w || newPos.y < 0 ||
-              newPos.y >= diffStruct[diff].h)
+          if (newPos.x < 0 ||
+              newPos.x >= diffStruct[static_cast<int>(diff)].w ||
+              newPos.y < 0 || newPos.y >= diffStruct[static_cast<int>(diff)].h)
             continue;
           if (mineField->GetPressStatus(newPos) == true) continue;
           if (mineField->GetMineStatus(newPos) == true) continue;
@@ -207,27 +237,47 @@ void GameEngine::LeftButtonAction(Point pos) {
 }
 
 void GameEngine::RightButtonAction(Point pos) {
-  if (mineField->GetFlagStatus(pos) == false) {
-    if (mineField->GetMineStatus(pos) == true)
-      foundMines++;
-    else
-      foundMines--;
-  }
+  if (mineField->GetPressStatus(pos)) return;
   mineField->ChangeFlagStatus(pos);
+  if (mineField->GetFoundMineCount() == mineField->GetTotalMineCount()) {
+    for (int i = 0; i < diffStruct[static_cast<int>(diff)].w; i++) {
+      for (int j = 0; j < diffStruct[static_cast<int>(diff)].h; j++) {
+        Point tmpPos = {i, j};
+        if (!mineField->GetFlagStatus(tmpPos))
+          mineField->ChangePressStatus(tmpPos);
+      }
+    }
+    gameStatus = GameStatus::Win;
+  }
 }
 
-enum CellStatus GameEngine::GetCellStatus(Point pos) {
+ButtonStatus GameEngine::GetCellStatus(Point pos) {
   if (mineField->GetPressStatus(pos) == false) {
     if (mineField->GetFlagStatus(pos) == false)
-      return Cell_NotPressed;
+      return ButtonStatus::Cell_NotPressed;
     else
-      return Cell_FlagPlaced;
+      return ButtonStatus::Cell_FlagPlaced;
   } else {
     if (mineField->GetMineStatus(pos) == true)
-      return Cell_MineExposed;
+      return ButtonStatus::Cell_MineExposed;
     else if (mineField->GetNearMine(pos) == 0)
-      return Cell_Pressed;
+      return ButtonStatus::Cell_Pressed;
     else
-      return (enum CellStatus)mineField->GetNearMine(pos);
+      return static_cast<ButtonStatus>(mineField->GetNearMine(pos));
   }
+}
+
+GameEngine::ClickedPos GameEngine::CheckClickedPos(SDL_Event event) {
+  int buttonMarginX =
+      (CELL_SIZE * diffStruct[static_cast<int>(diff)].w - RESTARTBUTTON_WIDTH) /
+      2;
+  if (event.button.y >= GAME_HEADER_HEIGHT)
+    return ClickedPos::Cell;
+  else if (event.button.y >= RESTARTBUTTON_PADDING &&
+           event.button.y < RESTARTBUTTON_PADDING + RESTARTBUTTON_HEIGHT &&
+           event.button.x >= buttonMarginX &&
+           event.button.x < buttonMarginX + RESTARTBUTTON_WIDTH)
+    return ClickedPos::Button;
+  else
+    return ClickedPos::Background;
 }

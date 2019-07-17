@@ -4,7 +4,7 @@ MineField::MineField(int w, int h, int mineNum) {
   width = w;
   height = h;
   totalMines = mineNum;
-  cell.resize(width * height);
+  cell.resize(static_cast<size_t>((width + 1) * (height + 1)));
 }
 
 void MineField::PlaceMines(Point firstClickPos) {
@@ -19,7 +19,6 @@ void MineField::PlaceMines(Point firstClickPos) {
 
     if (x == firstClickPos.x && y == firstClickPos.y) continue;
     if (cell[rng].isMine) continue;
-
     cell[rng].isMine = true;
     curPlacedMine++;
 
@@ -43,15 +42,18 @@ void MineField::ChangePressStatus(Point pos) {
 
 void MineField::ChangeFlagStatus(Point pos) {
   int posIndex = CalcIndex(pos);
-  cell[posIndex].isFlagPlaced = !cell[posIndex].isFlagPlaced;
-  if (cell[posIndex].isFlagPlaced)
-    flagedMines++;
-  else
-    flagedMines--;
-}
+  // If a player used all flags and tried to place a flag, do nothing
+  if (flagPlaceCount == totalMines && !cell[posIndex].isFlagPlaced) return;
 
-int MineField::GetRemainMineCount() const
-{
-  int remainCount = totalMines - flagedMines;
-  return remainCount > 0 ? remainCount : 0;
+  cell[posIndex].isFlagPlaced = !cell[posIndex].isFlagPlaced;
+  if (cell[posIndex].isMine) {
+    if (cell[posIndex].isFlagPlaced)
+      foundMines++;
+    else
+      foundMines--;
+  }
+  if (cell[posIndex].isFlagPlaced)
+    flagPlaceCount++;
+  else
+    flagPlaceCount--;
 }

@@ -28,17 +28,19 @@ class MineField {
     bool isPressed = false;
     // A bool variable which saves whether field has a flag
     bool isFlagPlaced = false;
-    // A integer variavle which saves numbers of mines nearby
+    // A integer variable which saves numbers of mines nearby
     int nearMine = 0;
   };
 
   // A 2-D Cell class vector of the MineField
   std::vector<Cell> cell;
+
   bool minePlaced = false;
   int width = 0;
   int height = 0;
   int totalMines = 0;
-  int flagedMines = 0;
+  int flagPlaceCount = 0;
+  int foundMines = 0;
   Point posMineExploded = {-1, -1};
 
  public:
@@ -55,24 +57,27 @@ class MineField {
   void ChangeFlagStatus(Point pos);
 
   void ChangeMineExploded(Point pos) { posMineExploded = pos; }
-  Point GetMineExploded() { return posMineExploded; }
 
-  int GetRemainMineCount() const;
+  Point GetMineExploded() const { return posMineExploded; }
+  int GetRemainFlagCount() const { return totalMines - flagPlaceCount; }
+  int GetTotalMineCount() const { return totalMines; }
+  int GetFoundMineCount() const { return foundMines; }
+  bool GetMinePlaced() const { return minePlaced; }
 
-  bool GetMinePlaced() { return minePlaced; }
   // Returns the press status of cell
-  bool GetPressStatus(Point pos) { return cell[CalcIndex(pos)].isPressed; }
-
+  bool GetPressStatus(Point pos) const {
+    return cell[CalcIndex(pos)].isPressed;
+  }
   // Returns the flag status of cell
-  bool GetFlagStatus(Point pos) { return cell[CalcIndex(pos)].isFlagPlaced; }
-
+  bool GetFlagStatus(Point pos) const {
+    return cell[CalcIndex(pos)].isFlagPlaced;
+  }
   // Returns the mine status of cell
-  bool GetMineStatus(Point pos) { return cell[CalcIndex(pos)].isMine; }
-
+  bool GetMineStatus(Point pos) const { return cell[CalcIndex(pos)].isMine; }
   // Returns the number of mines nearby selected cell
-  int GetNearMine(Point pos) { return cell[CalcIndex(pos)].nearMine; }
+  int GetNearMine(Point pos) const { return cell[CalcIndex(pos)].nearMine; }
 
-  int CalcIndex(Point pos) { return pos.x + pos.y * width; }
+  int CalcIndex(Point pos) const { return pos.x + pos.y * width; }
 };
 
 #endif  // !MINEFIELD_H

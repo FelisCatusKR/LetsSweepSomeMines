@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include "SDL.h"
-#include "SDL_ttf.h"
 
 constexpr int CELL_SIZE = 32;
 constexpr int MENUSCREEN_WIDTH = 416;
@@ -14,9 +13,16 @@ constexpr int MENUBUTTON_WIDTH = 192;
 constexpr int MENUBUTTON_HEIGHT = 128;
 constexpr int MENUBUTTON_MARGIN_X = 112;
 constexpr int MENUBUTTON_MARGIN_Y = 40;
-constexpr int GAME_HEADER_HEIGHT = 64;
+constexpr int GAME_HEADER_HEIGHT = 72;
+constexpr int RESTARTBUTTON_WIDTH = 64;
+constexpr int RESTARTBUTTON_HEIGHT = 64;
+constexpr int RESTARTBUTTON_PADDING =
+    (GAME_HEADER_HEIGHT - RESTARTBUTTON_HEIGHT) / 2;
+constexpr int DIGIT_WIDTH = 24;
+constexpr int DIGIT_HEIGHT = 48;
+constexpr int DIGIT_PADDING = 12;
 
-enum CellStatus {
+enum class ButtonStatus {
   Cell_Pressed = 0,
   Cell_1,
   Cell_2,
@@ -36,29 +42,46 @@ enum CellStatus {
   Main_Normal,
   Main_Normal_Pressed,
   Main_Hard,
-  Main_Hard_Pressed
+  Main_Hard_Pressed,
+  Restart_NotPressed,
+  Restart_Pressing,
+  Restart_Win,
+  Restart_Lose
+};
+
+enum class DigitStatus {
+  Digit_0 = 0,
+  Digit_1,
+  Digit_2,
+  Digit_3,
+  Digit_4,
+  Digit_5,
+  Digit_6,
+  Digit_7,
+  Digit_8,
+  Digit_9,
+  Digit_Off
 };
 
 class RenderClass {
  private:
   SDL_Window* window;
   SDL_Renderer* renderer;
-  TTF_Font* font;
-  SDL_Texture* cellTexture[20];
+  SDL_Texture* buttonTexture[24];
+  SDL_Texture* digitTexture[21];
 
-  struct RectUnit {
+  struct ButtonUnit {
     SDL_Rect r;
-    enum CellStatus status;
+    ButtonStatus status;
   };
-  std::vector<RectUnit> rect;
+  std::vector<ButtonUnit> buttonArray;
 
-  struct TextPaintUnit {
-    char str[1000] = {0,};
-    SDL_Texture* texture;
+  struct DigitUnit {
     SDL_Rect r;
+    DigitStatus status = DigitStatus::Digit_Off;
   };
-  TextPaintUnit timerUnit;
-  TextPaintUnit remainCountUnit;
+  std::vector<DigitUnit> remainFlagArray;
+  std::vector<DigitUnit> timerArray;
 
   int width;
   int height;
@@ -66,16 +89,13 @@ class RenderClass {
   int windowHeight;
   bool isInGame;
 
-  const char* fontFile = "RobotoMono-Regular.ttf";
-  const int fontSize = 16;
-
  public:
   ~RenderClass();
   SDL_Texture* SurfaceToTexture(SDL_Surface* surface);
   bool Init();
   void LoadBMPs();
-  void DrawCell(int index, enum CellStatus cellStatus);
-  void DrawTimer(double timer);
+  void DrawCell(int index, ButtonStatus cellStatus);
+  void DrawTimer(int timer);
   void DrawRemainCount(int count);
   void ResizeWindow();
   void MainMenu();

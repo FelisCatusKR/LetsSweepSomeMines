@@ -24,27 +24,16 @@ bool RenderClass::Init() {
     return false;
   }
 
-  if (TTF_Init() == -1) {
-    std::cout << " Failed to initialize SDL_ttf : " << SDL_GetError()
-              << std::endl;
-    return false;
-  }
-
-  font = TTF_OpenFont(fontFile, fontSize);
-  if (font == nullptr) {
-    std::cout << " Failed to load a font file : " << SDL_GetError()
-              << std::endl;
-    return false;
-  }
-
   LoadBMPs();
+
+  timerArray.resize(3);
+  remainFlagArray.resize(3);
   return true;
 }
 
 RenderClass::~RenderClass() {
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
-  TTF_CloseFont(font);
   SDL_Quit();
 }
 
@@ -56,38 +45,77 @@ SDL_Texture* RenderClass::SurfaceToTexture(SDL_Surface* surface) {
 }
 
 void RenderClass::LoadBMPs() {
-  cellTexture[Cell_Pressed] =
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_Pressed)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Mine_Pressed.bmp"));
-  cellTexture[Cell_1] = SurfaceToTexture(SDL_LoadBMP("Images/Mine_1.bmp"));
-  cellTexture[Cell_2] = SurfaceToTexture(SDL_LoadBMP("Images/Mine_2.bmp"));
-  cellTexture[Cell_3] = SurfaceToTexture(SDL_LoadBMP("Images/Mine_3.bmp"));
-  cellTexture[Cell_4] = SurfaceToTexture(SDL_LoadBMP("Images/Mine_4.bmp"));
-  cellTexture[Cell_5] = SurfaceToTexture(SDL_LoadBMP("Images/Mine_5.bmp"));
-  cellTexture[Cell_6] = SurfaceToTexture(SDL_LoadBMP("Images/Mine_6.bmp"));
-  cellTexture[Cell_7] = SurfaceToTexture(SDL_LoadBMP("Images/Mine_7.bmp"));
-  cellTexture[Cell_8] = SurfaceToTexture(SDL_LoadBMP("Images/Mine_8.bmp"));
-  cellTexture[Cell_MineExposed] =
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_1)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Mine_1.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_2)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Mine_2.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_3)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Mine_3.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_4)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Mine_4.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_5)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Mine_5.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_6)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Mine_6.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_7)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Mine_7.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_8)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Mine_8.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_MineExposed)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Mine_MineExposed.bmp"));
-  cellTexture[Cell_Pressing] =
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_Pressing)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Mine_Pressing.bmp"));
-  cellTexture[Cell_NotPressed] =
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_NotPressed)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Mine_NotPressed.bmp"));
-  cellTexture[Cell_FlagPlaced] =
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_FlagPlaced)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Mine_FlagPlaced.bmp"));
-  cellTexture[Cell_MineExploded] =
+  buttonTexture[static_cast<int>(ButtonStatus::Cell_MineExploded)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Mine_MineExploded.bmp"));
-  cellTexture[Main_Easy] =
+  buttonTexture[static_cast<int>(ButtonStatus::Main_Easy)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Main_Easy.bmp"));
-  cellTexture[Main_Easy_Pressed] =
+  buttonTexture[static_cast<int>(ButtonStatus::Main_Easy_Pressed)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Main_Easy_Pressed.bmp"));
-  cellTexture[Main_Normal] =
+  buttonTexture[static_cast<int>(ButtonStatus::Main_Normal)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Main_Normal.bmp"));
-  cellTexture[Main_Normal_Pressed] =
+  buttonTexture[static_cast<int>(ButtonStatus::Main_Normal_Pressed)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Main_Normal_Pressed.bmp"));
-  cellTexture[Main_Hard] =
+  buttonTexture[static_cast<int>(ButtonStatus::Main_Hard)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Main_Hard.bmp"));
-  cellTexture[Main_Hard_Pressed] =
+  buttonTexture[static_cast<int>(ButtonStatus::Main_Hard_Pressed)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Main_Hard_Pressed.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Restart_NotPressed)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Restart_NotPressed.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Restart_Pressing)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Restart_Pressing.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Restart_Win)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Restart_Win.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Restart_Lose)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Restart_Lose.bmp"));
+
+  digitTexture[static_cast<int>(DigitStatus::Digit_0)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_0.bmp"));
+  digitTexture[static_cast<int>(DigitStatus::Digit_1)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_1.bmp"));
+  digitTexture[static_cast<int>(DigitStatus::Digit_2)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_2.bmp"));
+  digitTexture[static_cast<int>(DigitStatus::Digit_3)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_3.bmp"));
+  digitTexture[static_cast<int>(DigitStatus::Digit_4)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_4.bmp"));
+  digitTexture[static_cast<int>(DigitStatus::Digit_5)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_5.bmp"));
+  digitTexture[static_cast<int>(DigitStatus::Digit_6)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_6.bmp"));
+  digitTexture[static_cast<int>(DigitStatus::Digit_7)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_7.bmp"));
+  digitTexture[static_cast<int>(DigitStatus::Digit_8)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_8.bmp"));
+  digitTexture[static_cast<int>(DigitStatus::Digit_9)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_9.bmp"));
+  digitTexture[static_cast<int>(DigitStatus::Digit_Off)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Display_Off.bmp"));
 }
 
 void RenderClass::ResizeWindow() {
@@ -102,17 +130,40 @@ void RenderClass::ResizeWindow() {
   SDL_SetWindowSize(window, windowWidth, windowHeight);
 }
 
-void RenderClass::DrawCell(int index, enum CellStatus cellStatus) {
-  rect[index].status = cellStatus;
+void RenderClass::DrawCell(int index, ButtonStatus cellStatus) {
+  buttonArray[index].status = cellStatus;
 }
 
-void RenderClass::DrawTimer(double timer) {
-  std::sprintf(timerUnit.str, "%.1lf", timer);
+void RenderClass::DrawTimer(int timer) {
+  if (timer == 0) {
+    timerArray[0].status = DigitStatus::Digit_0;
+    return;
+  }
+  for (int i = 0; i < timerArray.size(); i++) {
+    if (timer == 0) {
+      timerArray[i].status = DigitStatus::Digit_Off;
+      continue;
+    }
+    int tmp = timer % 10;
+    timerArray[i].status = static_cast<DigitStatus>(tmp);
+    timer /= 10;
+  }
 }
 
-void RenderClass::DrawRemainCount(int count)
-{
-  std::sprintf(remainCountUnit.str, "%03d", count);
+void RenderClass::DrawRemainCount(int count) {
+  if (count == 0) {
+    remainFlagArray[0].status = DigitStatus::Digit_0;
+    return;
+  }
+  for (int i = 0; i < remainFlagArray.size(); i++) {
+    if (count == 0) {
+      remainFlagArray[i].status = DigitStatus::Digit_Off;
+      continue;
+    }
+    int tmp = count % 10;
+    remainFlagArray[i].status = static_cast<DigitStatus>(tmp);
+    count /= 10;
+  }
 }
 
 void RenderClass::MainMenu() {
@@ -121,14 +172,14 @@ void RenderClass::MainMenu() {
   ResizeWindow();
   isInGame = false;
 
-  for (auto i : rect) SDL_RectEmpty(&(i.r));
-  rect.clear();
-  rect.resize(3);
+  for (auto i : buttonArray) SDL_RectEmpty(&(i.r));
+  buttonArray.clear();
+  buttonArray.resize(3);
   for (int i = 0; i < 3; i++) {
-    rect[i].r.w = MENUBUTTON_WIDTH;
-    rect[i].r.h = MENUBUTTON_HEIGHT;
-    rect[i].r.x = MENUBUTTON_MARGIN_X;
-    rect[i].r.y = MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * i;
+    buttonArray[i].r.w = MENUBUTTON_WIDTH;
+    buttonArray[i].r.h = MENUBUTTON_HEIGHT;
+    buttonArray[i].r.x = MENUBUTTON_MARGIN_X;
+    buttonArray[i].r.y = MENUBUTTON_MARGIN_Y * (i + 1) + MENUBUTTON_HEIGHT * i;
   }
 }
 
@@ -138,21 +189,39 @@ void RenderClass::NewGame(int w, int h) {
   windowWidth = w * CELL_SIZE;
   windowHeight = h * CELL_SIZE + GAME_HEADER_HEIGHT;
   ResizeWindow();
-  timerUnit.r.x = windowWidth - 64;
-  timerUnit.r.y = 12;
-  remainCountUnit.r.x = 12;
-  remainCountUnit.r.y = 12;
   isInGame = true;
 
-  rect.clear();
-  rect.resize(width * height);
+  buttonArray.clear();
+  buttonArray.resize(width * height + 1);
   for (int i = 0; i < width; i++) {
     for (int j = 0; j < height; j++) {
-      rect[i + j * width].r.x = i * CELL_SIZE;
-      rect[i + j * width].r.y = j * CELL_SIZE + GAME_HEADER_HEIGHT;
-      rect[i + j * width].r.w = CELL_SIZE;
-      rect[i + j * width].r.h = CELL_SIZE;
+      buttonArray[i + j * width].r.x = i * CELL_SIZE;
+      buttonArray[i + j * width].r.y = j * CELL_SIZE + GAME_HEADER_HEIGHT;
+      buttonArray[i + j * width].r.w = CELL_SIZE;
+      buttonArray[i + j * width].r.h = CELL_SIZE;
     }
+  }
+
+  buttonArray[width * height].r.x = (windowWidth - RESTARTBUTTON_WIDTH) / 2;
+  buttonArray[width * height].r.y = RESTARTBUTTON_PADDING;
+  buttonArray[width * height].r.w = RESTARTBUTTON_WIDTH;
+  buttonArray[width * height].r.h = RESTARTBUTTON_HEIGHT;
+  buttonArray[width * height].status = ButtonStatus::Restart_NotPressed;
+
+  for (int i = 0; i < remainFlagArray.size(); i++) {
+    remainFlagArray[i].r.x =
+        (static_cast<int>(remainFlagArray.size()) - 1 - i) * DIGIT_WIDTH +
+        DIGIT_PADDING;
+    remainFlagArray[i].r.y = DIGIT_PADDING;
+    remainFlagArray[i].r.w = DIGIT_WIDTH;
+    remainFlagArray[i].r.h = DIGIT_HEIGHT;
+  }
+
+  for (int i = 0; i < timerArray.size(); i++) {
+    timerArray[i].r.x = windowWidth - DIGIT_WIDTH * (i + 1) - DIGIT_PADDING;
+    timerArray[i].r.y = DIGIT_PADDING;
+    timerArray[i].r.w = DIGIT_WIDTH;
+    timerArray[i].r.h = DIGIT_HEIGHT;
   }
 }
 
@@ -160,27 +229,19 @@ void RenderClass::Render() {
   // Clear a renderer
   SDL_RenderClear(renderer);
 
-  // Draw buttons in a rect vector
-  for (auto i : rect)
-    SDL_RenderCopy(renderer, cellTexture[i.status], nullptr, &(i.r));
+  // Draw objects in a buttonArray vector
+  for (auto i : buttonArray)
+    SDL_RenderCopy(renderer, buttonTexture[static_cast<int>(i.status)], nullptr,
+                   &(i.r));
 
-  // Draw a timer if it is a game screeen
+  // Draw timer and flag counter to header
   if (isInGame) {
-    SDL_Surface* timerSurface =
-        TTF_RenderText_Solid(font, timerUnit.str, {192, 0, 0, 255});
-    timerUnit.texture = SurfaceToTexture(timerSurface);
-    SDL_QueryTexture(timerUnit.texture, nullptr, nullptr, &timerUnit.r.w,
-                     &timerUnit.r.h);
-    SDL_RenderCopy(renderer, timerUnit.texture, nullptr, &timerUnit.r);
-
-    SDL_Surface* remainCountSurface =
-      TTF_RenderText_Solid(font, remainCountUnit.str, {192, 0, 0, 255});
-    remainCountUnit.texture = SurfaceToTexture(remainCountSurface);
-    SDL_QueryTexture(remainCountUnit.texture, nullptr, nullptr, &remainCountUnit.r.w,
-      &remainCountUnit.r.h);
-    SDL_RenderCopy(renderer, remainCountUnit.texture, nullptr, &remainCountUnit.r);
-
+    for (auto i : remainFlagArray)
+      SDL_RenderCopy(renderer, digitTexture[static_cast<int>(i.status)],
+                     nullptr, &(i.r));
+    for (auto i : timerArray)
+      SDL_RenderCopy(renderer, digitTexture[static_cast<int>(i.status)],
+                     nullptr, &(i.r));
   }
-
   SDL_RenderPresent(renderer);
 }
