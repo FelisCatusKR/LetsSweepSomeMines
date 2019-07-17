@@ -25,9 +25,6 @@ bool RenderClass::Init() {
   }
 
   LoadBMPs();
-
-  timerArray.resize(3);
-  remainFlagArray.resize(3);
   return true;
 }
 
@@ -208,6 +205,8 @@ void RenderClass::NewGame(int w, int h) {
   buttonArray[width * height].r.h = RESTARTBUTTON_HEIGHT;
   buttonArray[width * height].status = ButtonStatus::Restart_NotPressed;
 
+  remainFlagArray.clear();
+  remainFlagArray.resize(3);
   for (int i = 0; i < remainFlagArray.size(); i++) {
     remainFlagArray[i].r.x =
         (static_cast<int>(remainFlagArray.size()) - 1 - i) * DIGIT_WIDTH +
@@ -216,7 +215,8 @@ void RenderClass::NewGame(int w, int h) {
     remainFlagArray[i].r.w = DIGIT_WIDTH;
     remainFlagArray[i].r.h = DIGIT_HEIGHT;
   }
-
+  timerArray.clear();
+  timerArray.resize(3);
   for (int i = 0; i < timerArray.size(); i++) {
     timerArray[i].r.x = windowWidth - DIGIT_WIDTH * (i + 1) - DIGIT_PADDING;
     timerArray[i].r.y = DIGIT_PADDING;
