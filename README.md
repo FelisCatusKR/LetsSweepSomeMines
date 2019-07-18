@@ -1,5 +1,6 @@
 # LetsSweepSomeMines
-LetsSweepSomeMines is a Minesweeper clone written in C++ with SDL2. 
+LetsSweepSomeMines is a Minesweeper clone written in C++ with SDL2.
+![LetsSweepSomeMines screenshot](https://raw.githubusercontent.com/FelisCatusKR/feliscatuskr.github.io/master/KakaoTalk_20190717_192414310.png)
 
 ## How to build
 1. Download development libraries for Visual C++ from here: https://www.libsdl.org/download-2.0.php
