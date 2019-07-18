@@ -46,7 +46,8 @@ enum class ButtonStatus {
   Restart_NotPressed,
   Restart_Pressing,
   Restart_Win,
-  Restart_Lose
+  Restart_Lose,
+  Restart_Clicking
 };
 
 enum class DigitStatus {
@@ -67,7 +68,7 @@ class RenderClass {
  private:
   SDL_Window* window;
   SDL_Renderer* renderer;
-  SDL_Texture* buttonTexture[24];
+  SDL_Texture* buttonTexture[25];
   SDL_Texture* digitTexture[21];
 
   struct ButtonUnit {

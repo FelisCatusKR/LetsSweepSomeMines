@@ -90,6 +90,8 @@ void RenderClass::LoadBMPs() {
       SurfaceToTexture(SDL_LoadBMP("Images/Restart_Win.bmp"));
   buttonTexture[static_cast<int>(ButtonStatus::Restart_Lose)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Restart_Lose.bmp"));
+  buttonTexture[static_cast<int>(ButtonStatus::Restart_Clicking)] =
+      SurfaceToTexture(SDL_LoadBMP("Images/Restart_Clicking.bmp"));
 
   digitTexture[static_cast<int>(DigitStatus::Digit_0)] =
       SurfaceToTexture(SDL_LoadBMP("Images/Display_0.bmp"));

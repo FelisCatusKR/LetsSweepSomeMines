@@ -38,6 +38,8 @@ class MineField {
   bool minePlaced = false;
   int width = 0;
   int height = 0;
+  int totalCells = 0;
+  int openedCells = 0;
   int totalMines = 0;
   int flagPlaceCount = 0;
   int foundMines = 0;
@@ -60,6 +62,7 @@ class MineField {
 
   Point GetMineExploded() const { return posMineExploded; }
   int GetRemainFlagCount() const { return totalMines - flagPlaceCount; }
+  int GetRemainCellCount() const { return totalCells - openedCells; }
   int GetTotalMineCount() const { return totalMines; }
   int GetFoundMineCount() const { return foundMines; }
   bool GetMinePlaced() const { return minePlaced; }

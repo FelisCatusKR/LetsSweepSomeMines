@@ -179,6 +179,8 @@ bool GameEngine::RunGame() {
       renderClass->DrawCell(restartButtonIndex, ButtonStatus::Restart_Win);
     else if (gameStatus == GameStatus::Lose)
       renderClass->DrawCell(restartButtonIndex, ButtonStatus::Restart_Lose);
+    else if (isClicking && prevClickedPos == ClickedPos::Cell)
+      renderClass->DrawCell(restartButtonIndex, ButtonStatus::Restart_Clicking);
     else
       renderClass->DrawCell(restartButtonIndex,
                             ButtonStatus::Restart_NotPressed);
@@ -195,8 +197,20 @@ bool GameEngine::RunGame() {
 void GameEngine::LeftButtonAction(Point pos) {
   mineField->ChangePressStatus(pos);
 
+  // Change the game status to Win if all cells expect mine ones are opened
+  if (mineField->GetRemainCellCount() == mineField->GetTotalMineCount()) {
+    for (int i = 0; i < diffStruct[static_cast<int>(diff)].w; i++) {
+      for (int j = 0; j < diffStruct[static_cast<int>(diff)].h; j++) {
+        Point tmpPos = {i, j};
+        if (mineField->GetMineStatus(tmpPos) && !mineField->GetFlagStatus(tmpPos))
+          mineField->ChangeFlagStatus(tmpPos);
+      }
+    }
+    gameStatus = GameStatus::Win;
+  }
+
   // Explode a mine and change the game status to Lose if the cell has a mine
-  if (mineField->GetMineStatus(pos)) {
+  else if (mineField->GetMineStatus(pos)) {
     mineField->ChangeMineExploded(pos);
     for (int i = 0; i < diffStruct[static_cast<int>(diff)].w; i++) {
       for (int j = 0; j < diffStruct[static_cast<int>(diff)].h; j++)
@@ -205,50 +219,13 @@ void GameEngine::LeftButtonAction(Point pos) {
     gameStatus = GameStatus::Lose;
   }
 
-  else {
-    // If this click is the first click of the game, place mines and start a
-    // timer
-    if (!mineField->GetMinePlaced()) {
-      mineField->PlaceMines(pos);
-      timer->Init();
-    }
-    if (mineField->GetNearMine(pos) == 0) {
-      std::queue<Point> q;
-      q.push(pos);
-      while (!q.empty()) {
-        int x = q.front().x;
-        int y = q.front().y;
-        q.pop();
-        for (int i = 0; i < 8; i++) {
-          Point newPos = {x + dx_8[i], y + dy_8[i]};
-          if (newPos.x < 0 ||
-              newPos.x >= diffStruct[static_cast<int>(diff)].w ||
-              newPos.y < 0 || newPos.y >= diffStruct[static_cast<int>(diff)].h)
-            continue;
-          if (mineField->GetPressStatus(newPos) == true) continue;
-          if (mineField->GetMineStatus(newPos) == true) continue;
-          mineField->ChangePressStatus(newPos);
-          if (mineField->GetNearMine(newPos) != 0) continue;
-          q.push({newPos});
-        }
-      }
-    }
-  }
+  // If this click is the first click of the game, start a timer
+  if (!timer->GetInit()) timer->Init();
 }
 
 void GameEngine::RightButtonAction(Point pos) {
   if (mineField->GetPressStatus(pos)) return;
   mineField->ChangeFlagStatus(pos);
-  if (mineField->GetFoundMineCount() == mineField->GetTotalMineCount()) {
-    for (int i = 0; i < diffStruct[static_cast<int>(diff)].w; i++) {
-      for (int j = 0; j < diffStruct[static_cast<int>(diff)].h; j++) {
-        Point tmpPos = {i, j};
-        if (!mineField->GetFlagStatus(tmpPos))
-          mineField->ChangePressStatus(tmpPos);
-      }
-    }
-    gameStatus = GameStatus::Win;
-  }
 }
 
 ButtonStatus GameEngine::GetCellStatus(Point pos) {

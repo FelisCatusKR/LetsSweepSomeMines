@@ -3,8 +3,9 @@
 MineField::MineField(int w, int h, int mineNum) {
   width = w;
   height = h;
+  totalCells = width * height;
   totalMines = mineNum;
-  cell.resize(static_cast<size_t>((width + 1) * (height + 1)));
+  cell.resize(static_cast<size_t>(totalCells));
 }
 
 void MineField::PlaceMines(Point firstClickPos) {
@@ -38,6 +39,34 @@ void MineField::PlaceMines(Point firstClickPos) {
 void MineField::ChangePressStatus(Point pos) {
   int posIndex = CalcIndex(pos);
   cell[posIndex].isPressed = true;
+  if (cell[posIndex].isFlagPlaced) ChangeFlagStatus(pos);
+  openedCells++;
+
+  if (!minePlaced) PlaceMines(pos);
+
+  if (cell[posIndex].nearMine == 0) {
+    std::queue<Point> q;
+    q.push(pos);
+    while (!q.empty()) {
+      int x = q.front().x;
+      int y = q.front().y;
+      q.pop();
+      for (int i = 0; i < 8; i++) {
+        Point newPos = {x + dx_8[i], y + dy_8[i]};
+        if (newPos.x < 0 || newPos.x >= width ||
+            newPos.y < 0 || newPos.y >= height)
+          continue;
+        int newPosIndex = CalcIndex(newPos);
+        if (cell[newPosIndex].isPressed) continue;
+        if (cell[newPosIndex].isFlagPlaced) continue;
+        cell[newPosIndex].isPressed = true;
+        if (cell[newPosIndex].isFlagPlaced) ChangeFlagStatus(newPos);
+        openedCells++;
+        if (cell[newPosIndex].nearMine != 0) continue;
+        q.push({newPos});
+      }
+    }
+  }
 }
 
 void MineField::ChangeFlagStatus(Point pos) {
